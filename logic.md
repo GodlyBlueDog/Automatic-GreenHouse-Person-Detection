@@ -1,3 +1,6 @@
+
+Flow chart about 
+
 ```mermaid
 flowchart TD
 terminalStart([Start])
@@ -27,8 +30,11 @@ isButtonPressed{buttonState > buttonStart}
 
 %% servo
 servoPin(servoPin = 5)
-servoMaxDeg(servoMax = 30)
-servoMinDeg(servoMin = 0)
+servoMaxDeg(servoMaxDeg = 30)
+servoMinDeg(servoMinDeg = 0)
+
+%% soil moisture 
+soilMoistureSensor(soilReading = soilMoistureReadout)
 
 
 
@@ -43,6 +49,7 @@ buttonStart --> currentButtonReading
 currentButtonReading --> servoPin
 servoPin --> servoMaxDeg
 servoMaxDeg --> servoMinDeg
+servoMinDeg --> isButtonPressed
 
 
 ```
