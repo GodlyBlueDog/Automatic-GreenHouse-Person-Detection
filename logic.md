@@ -69,10 +69,8 @@ isButtonPressed --> |FALSE| disableAll
 
 
 ```
-```mermaid
-flowchart TD
-terminalStart([Start])
-terminalEnd([End])
+Temp flowchart
+cc
 
 %% Tempurture 
 currentRoomTempReading(roomTemp = heat Sensor readout)
@@ -100,10 +98,47 @@ servoMax --> activateServo(write HIGH to servo)
 
 
 ```
+Distance
 ```mermaid
 flowchart TD
 terminalStart([Start])
 terminalEnd([End])
 
-```
 
+ifDistanceLessThanThreshold{distanceRead > distanceThreshold}
+activateSonar(writeHIGH to Sonar)
+
+terminalStart --> ifDistanceLessThanThreshold
+ifDistanceLessThanThreshold --> |TRUE| DoorIsOpen
+ifDistanceLessThanThreshold --> |FALSE| DoorIsClosed
+
+
+
+
+
+
+
+```
+Moisture Sensor 
+```mermaid
+flowchart TD
+terminalStart([Start])
+terminalEnd([End])
+
+
+soilMoistureSensor(soilReading = soilMoistureReadout)
+soilLimit(soilMoisture 30%)
+soilMoisture(wnatedWater 60%)
+activateMoistureSensor(write HIGH to Moisture Sensor)
+moisturePin(moisture Pin = 6)
+moistureCheck{if}
+
+
+
+
+
+
+
+
+
+```
