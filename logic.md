@@ -37,9 +37,13 @@ servoMaxDeg(servoMaxDeg = 30)
 servoMinDeg(servoMinDeg = 0)
 activateServo(write HIGH to servo)
 
-%% soil moisture 
+%% soil moisture 1052
 soilMoistureSensor(soilReading = soilMoistureReadout)
 activateMoistureSensor(write HIGH to Moisture Sensor)
+moisturePin(moisture Pin = 6)
+
+%% DC Motor
+dcMotorPin(dcPIN = 5 , 6)
 
 
 terminalStart --> thresholdSet
@@ -53,13 +57,53 @@ buttonStart --> currentButtonReading
 currentButtonReading --> servoPin
 servoPin --> servoMaxDeg
 servoMaxDeg --> servoMinDeg
-servoMinDeg --> isButtonPressed
+servoMinDeg --> moisturePin
+moisturePin --> isButtonPressed
 isButtonPressed --> |TRUE| activateMoistureSensor  
 activateMoistureSensor  --> activateServo
-activateServo --> activatePiezo
-activatePiezo --> activateSonar
+activateServo --> activateSonar
 activateSonar --> activateHeatSensor
+isButtonPressed --> |FALSE| disableAll
+
 
 
 
 ```
+```mermaid
+flowchart TD
+terminalStart([Start])
+terminalEnd([End])
+
+%% Tempurture 
+currentRoomTempReading(roomTemp = heat Sensor readout)
+roomTempLimit(roomTempLimit = 30c)
+ifTempGreaterThanLimit{roomTemp > roomTempLimit}
+activateHeatSensor(writeHIGH to Heat Senosor)
+
+%% servo
+servoPin(servoPin = 5)
+
+
+activateServo(write HIGH to servo)
+
+
+terminalStart -->  roomTempLimit
+roomTempLimit --> currentRoomTempReading
+currentRoomTempReading --> activateHeatSensor
+activateHeatSensor --> servoPin(servoPin = 5)
+servoPin(servoPin = 5) --> ifTempGreaterThanLimit 
+ifTempGreaterThanLimit -->  |TRUE| servoMax
+ifTempGreaterThanLimit -->  |FALSE| servoMin
+servoMax --> activateServo(write HIGH to servo)
+
+
+
+
+```
+```mermaid
+flowchart TD
+terminalStart([Start])
+terminalEnd([End])
+
+```
+
