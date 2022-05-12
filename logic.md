@@ -127,17 +127,82 @@ terminalEnd([End])
 
 
 soilMoistureSensor(soilReading = soilMoistureReadout)
-soilLimit(soilMoisture 30%)
-soilMoisture(wnatedWater 60%)
-activateMoistureSensor(write HIGH to Moisture Sensor)
+soilMoisture(wantedWater 60%)
 moisturePin(moisture Pin = 6)
-moistureCheck{if}
+moistureCheck{If soilMoisture < soilLowLimit}
+dcHIGH(Write High to dc Pin)
+ dcLOW(Write LOW to dc Pin)
+terminalStart --> soilMoistureSensor
+soilMoistureSensor --> soilLimit
+soilLimit --> soilMoisture
+soilMoisture --> moisturePin
+ moisturePin --> moistureCheck
+ moistureCheck --> |TRUE| dcHIGH
+  moistureCheck --> |FALSE| dcLOW
 
 
 
 
 
 
+
+
+
+
+
+
+
+
+```
+```mermaid
+flowchart TD
+terminalStart([Start])
+terminalEnd([End])
+
+thresholdSet(distanceThreshold = 5cm)
+currentDistanceReading(distanceRead = sonar Readout)
+ifDistanceLessThanThreshold{distanceRead < distanceThreshold}
+activateSonar(writeHIGH to Sonar)
+
+terminalStart --> thresholdSet
+thresholdSet --> currentDistanceReading
+currentDistanceReading --> activateSonar 
+activateSonar --> ifDistanceLessThanThreshold
+ifDistanceLessThanThreshold --> |TRUE| DoorOpen
+ifDistanceLessThanThreshold --> |FALSE| DoorClosed
+
+
+
+
+
+```
+
+```mermaid
+flowchart TD
+terminalStart([Start])
+terminalEnd([End])
+
+
+currentRoomTempReading(roomTemp = heat Sensor readout)
+roomTempLimit(roomTempLimit = 30c)
+ifTempGreaterThanLimit{roomTemp > roomTempLimit}
+activateHeatSensor(writeHIGH to Heat Senosor)
+
+terminalStart --> currentRoomTempReading
+ currentRoomTempReading --> roomTempLimit
+ roomTempLimit --> activateHeatSensor
+ activateHeatSensor --> ifTempGreaterThanLimit
+ifTempGreaterThanLimit --> |TRUE| WriteHighToServo
+ifTempGreaterThanLimit --> |FALSE| writeLowToServo
+
+
+
+
+```
+```mermaid
+flowchart TD
+terminalStart([Start])
+terminalEnd([End])
 
 
 
