@@ -21,7 +21,7 @@ activateSonar(writeHIGH to Sonar)
 
 %% peizo 
 setPiezoPin(piezoPin = 22)
-activatePiezo(write HIGH to piezoPin)
+
 
 %% button
 buttonStart(buttonStart = false)
@@ -125,20 +125,25 @@ flowchart TD
 terminalStart([Start])
 terminalEnd([End])
 
-
+watering{soil Reading = soilWantedMOisture}
 soilMoistureSensor(soilReading = soilMoistureReadout)
-soilMoisture(wantedWater 60%)
+soilWantedMoisture(wantedWater 60%)
 moisturePin(moisture Pin = 6)
 moistureCheck{If soilMoisture < soilLowLimit}
 dcHIGH(Write High to dc Pin)
  dcLOW(Write LOW to dc Pin)
 terminalStart --> soilMoistureSensor
 soilMoistureSensor --> soilLimit
-soilLimit --> soilMoisture
-soilMoisture --> moisturePin
+soilLimit --> soilWantedMoisture
+soilWantedMoisture --> moisturePin
  moisturePin --> moistureCheck
  moistureCheck --> |TRUE| dcHIGH
   moistureCheck --> |FALSE| dcLOW
+  dcHIGH --> activatePiezo(write HIGH to piezoPin)
+  activatePiezo(write HIGH to piezoPin) --> watering
+  watering --> |TRUE|dcLOW
+  watering --> |FALSE|dcHIGH
+  dcLOW --> moistureCheck
 
 
 
@@ -194,6 +199,7 @@ terminalStart --> currentRoomTempReading
  activateHeatSensor --> ifTempGreaterThanLimit
 ifTempGreaterThanLimit --> |TRUE| WriteHighToServo
 ifTempGreaterThanLimit --> |FALSE| writeLowToServo
+WriteHighToServo --> servoAngle30
 
 
 
