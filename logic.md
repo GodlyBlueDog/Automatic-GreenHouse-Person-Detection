@@ -203,7 +203,6 @@ WriteHighToServo --> servoAngle30
 
 
 
-
 ```
 ```mermaid
 flowchart TD
@@ -211,5 +210,13 @@ terminalStart([Start])
 terminalEnd([End])
 
 
+setHIGH(HIGH to PIR pin)
+PIRSensor{Check Readout out from PIR pin}
+
+terminalStart --> PIRpin10
+PIRpin10 --> setHIGH(HIGH to PIR pin)
+ setHIGH --> PIRSensor{Check Readout out from PIR pin}
+  PIRSensor --> |TRUE | dcLOW
+  PIRSensor --> |FALSE|  Nothing
 
 ```
