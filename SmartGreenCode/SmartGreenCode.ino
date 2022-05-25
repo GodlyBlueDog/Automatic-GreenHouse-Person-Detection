@@ -68,6 +68,16 @@ pinModel(pot, INPUT);
 // Piezo Buzzer
 pinMode(buzzer,OUTPUT);
 
+// Sonar - HC-SR04
+pinMode(trigPin, OUTPUT); // Sets the trigPin as an OUTPUT
+pinMode(echoPin, INPUT); // Sets the echoPin as an INPUT
+
+// Crash Sensor / Button
+pinMode(crashSensor, INPUT);
+
+// Line Sensor
+pinMode(lineSensorPin, OUTPUT);
+
 // SD Card initialisation
   Serial.print("Initializing SD card...");
   if (!SD.begin(10)) {
