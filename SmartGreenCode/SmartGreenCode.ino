@@ -21,7 +21,7 @@ const unsigned int IN4 = 4;
 const unsigned int EN = 9;
 
 // Create one motor instance
-L298N motor(EN, IN1, IN2);
+L298N motor(EN, IN3, IN4);
 
 // Servo
 #include <Servo.h>
@@ -63,10 +63,10 @@ motor.setSpeed(70);
 pinMode(moisturePin, INPUT);
 
 //Potentiometer
-pinModel(pot, INPUT);
+pinMode(pot, INPUT);
 
 // Piezo Buzzer
-pinMode(buzzer,OUTPUT);
+pinMode(piezoPin,OUTPUT);
 
 // Sonar - HC-SR04
 pinMode(trigPin, OUTPUT); // Sets the trigPin as an OUTPUT
@@ -93,7 +93,7 @@ logEvent("System Initialisation...");
 
 
 void loop() {
-                     
+                
 }
 
 void logEvent(String dataToLog) {
