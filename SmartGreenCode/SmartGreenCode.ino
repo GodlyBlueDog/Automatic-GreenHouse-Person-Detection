@@ -1,4 +1,4 @@
-
+// SD card module 
 #include <SPI.h>
 #include <SD.h>
 
@@ -93,8 +93,24 @@ logEvent("System Initialisation...");
 
 
 void loop() {
+         Serial.println(buttonRead());
+
+         
+          
                 
 }
+
+
+bool buttonRead(){
+  
+
+return digitalRead(crashSensor);
+
+
+  
+}
+
+
 
 void logEvent(String dataToLog) {
   /*
