@@ -96,23 +96,35 @@ void loop() {
          wateringSystem();
          windowOpen();
          personDetect();
+           
          
-         
-          
           delay(250);      
 }
 
-
+/*
+ * IT will take the values from Button, Line sensor, sonic sensor, and mostiure sensor and turn on the DC motor (watering system)
+ * @param If button is true, line sensor says door is closed, sonic sensor confirms the door is closed and if the mositure content on the soil is too low
+ * @return It will turn on the DC motor wich is sumlating a watering system pump.
+ */
 void wateringSystem() {
 
   
 }
-
+/*
+ *The servo will open the window when the person is in the green house. 
+ *@param if the door is open (sonic sensor true) the window will open
+ *@return The servio will turn to the set open height                                            
+ */
 void windowOpen(){
 
   
 }
 
+/*
+ * This uses the pir sensor to detect movemnt within the green house and use the sonic sensor to detect the door opening  
+ * @param if the pir and sonic sensor detect true turn of the watering system 
+ * @return turn off watering system.
+ */
 void personDetect(){
 
   
