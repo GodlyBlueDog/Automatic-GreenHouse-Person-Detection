@@ -93,19 +93,27 @@ logEvent("System Initialisation...");
 
 
 void loop() {
-         Serial.println(buttonRead());
-
+         wateringSystem();
+         windowOpen();
+         personDetect();
+         
          
           
-                
+          delay(250);      
 }
 
 
-bool buttonRead(){
+void wateringSystem() {
+
   
+}
 
-return digitalRead(crashSensor);
+void windowOpen(){
 
+  
+}
+
+void personDetect(){
 
   
 }
