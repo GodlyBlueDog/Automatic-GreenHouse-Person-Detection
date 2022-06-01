@@ -41,6 +41,10 @@ Servo myservo;
 
 #define crashSensor 7
 
+long duration;
+int distance;
+
+
 void setup() {
   Serial.begin(9600);           // Open serial communications and wait for port to open:
   while (!Serial) {
@@ -96,18 +100,20 @@ void loop() {
          wateringSystem();
          windowOpen();
          personDetect();
-           
+           Serial.println(wateringSystem());
          
           delay(250);      
 }
 
 /*
- * IT will take the values from Button, Line sensor, sonic sensor, and mostiure sensor and turn on the DC motor (watering system)
+ * IT will take the values from Button, Line sensor, sonic sensor, and mostiure sensor and turn on the DC motor (watering system) and turn on the traffic light to green
  * @param If button is true, line sensor says door is closed, sonic sensor confirms the door is closed and if the mositure content on the soil is too low
  * @return It will turn on the DC motor wich is sumlating a watering system pump.
  */
-void wateringSystem() {
+bool wateringSystem() {
+int buttonState = digitalRead(crashSensor);
 
+return buttonState;
   
 }
 /*
@@ -128,6 +134,33 @@ void windowOpen(){
 void personDetect(){
 
   
+}
+
+/*
+ * This reads the distance from the snoic sensnsor 
+ * @param gets the distance 
+ * @return returs a true or false depending on close and object is
+ */
+bool readDistance() {
+   // Clears the trigPin condition
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  // Sets the trigPin HIGH (ACTIVE) for 10 microseconds
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  // Reads the echoPin, returns the sound wave travel time in microseconds
+  duration = pulseIn(echoPin, HIGH);
+  // Calculating the distance
+  distance = duration * 0.034 / 2; // Speed of sound wave divided by 2 (go and back)
+  
+  if(distance < 100){
+    return true; // returns as 1
+  }else{
+    return false; // returns as 0
+  
+  }
+delay(20);
 }
 
 
