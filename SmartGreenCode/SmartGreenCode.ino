@@ -100,8 +100,10 @@ void loop() {
          wateringSystem();
          windowOpen();
          personDetect();
-           Serial.println(wateringSystem());
-         
+          // Serial.println(wateringSystem());
+         //Serial.println(readDistance());
+         Serial.println(potRead());
+       // piezoOut();
           delay(250);      
 }
 
@@ -141,7 +143,7 @@ void personDetect(){
  * @param gets the distance 
  * @return returs a true or false depending on close and object is
  */
-bool readDistance() {
+int readDistance() {
    // Clears the trigPin condition
   digitalWrite(trigPin, LOW);
   delayMicroseconds(2);
@@ -153,17 +155,45 @@ bool readDistance() {
   duration = pulseIn(echoPin, HIGH);
   // Calculating the distance
   distance = duration * 0.034 / 2; // Speed of sound wave divided by 2 (go and back)
+
+
   
-  if(distance < 100){
-    return true; // returns as 1
+  if(distance < 25){
+   return true; // returns as 1
   }else{
     return false; // returns as 0
   
   }
-delay(20);
+delay(100);
 }
 
+int buttonRead() {
 
+int buttonState = digitalRead(crashSensor);
+
+return buttonState;
+  
+}
+
+int piezoOut(){
+if(readDistance() == 1){
+  tone(piezoPin, potRead());
+}else
+{
+  noTone(piezoPin);
+}
+  
+}
+// will get pot vaule then give a percentage 
+int potRead(){
+  int potMax = 1016;
+int potValue = analogRead(pot);
+
+int potPercent = (potValue/1016) * 100;
+
+return potValue;
+  
+}
 
 void logEvent(String dataToLog) {
   /*
