@@ -1,4 +1,4 @@
-// SD card module 
+// SD card module
 #include <SPI.h>
 #include <SD.h>
 
@@ -9,19 +9,19 @@ DateTime rightNow;  // used to store the current time.
 
 
 #define ledRed A5
-#define ledYellow A1 
+#define ledYellow A1
 #define ledGreen A2
 
 // DC Motor & Motor Module - L298N
 #include <L298N.h>
 
-// Pin definition
+// Pin definition DC Motor
 const unsigned int IN3 = 5;
 const unsigned int IN4 = 4;
-const unsigned int EN = 9;
+
 
 // Create one motor instance
-L298N motor(EN, IN3, IN4);
+L298N motor(IN3, IN4);
 
 // Servo
 #include <Servo.h>
@@ -41,6 +41,8 @@ Servo myservo;
 
 #define crashSensor 7
 
+#define pirPin 6
+
 long duration;
 int distance;
 
@@ -48,103 +50,123 @@ int distance;
 void setup() {
   Serial.begin(9600);           // Open serial communications and wait for port to open:
   while (!Serial) {
-    delay(1);   
-    
+    delay(1);
+
   }
-    // Traffic Lights - LED Outputs
-pinMode(ledRed, OUTPUT);
-pinMode(ledYellow, OUTPUT);
-pinMode(ledGreen, OUTPUT);// wait for serial port to connect. Needed for native USB port only
+  // Traffic Lights - LED Outputs
+  pinMode(ledRed, OUTPUT);
+  pinMode(ledYellow, OUTPUT);
+  pinMode(ledGreen, OUTPUT);// wait for serial port to connect. Needed for native USB port only
 
 
-// DC Motor & Motor Module - L298N
-motor.setSpeed(70);
+  // DC Motor & Motor Module - L298N
+  motor.setSpeed(100);
 
-// Servo
+  // Servo
   myservo.attach(9);  // attaches the servo on pin 9 to the servo object
 
   // Moisture Sensor
-pinMode(moisturePin, INPUT);
+  pinMode(moisturePin, INPUT);
 
-//Potentiometer
-pinMode(pot, INPUT);
+  //Potentiometer
+  pinMode(pot, INPUT);
 
-// Piezo Buzzer
-pinMode(piezoPin,OUTPUT);
+  // Piezo Buzzer
+  pinMode(piezoPin, OUTPUT);
 
-// Sonar - HC-SR04
-pinMode(trigPin, OUTPUT); // Sets the trigPin as an OUTPUT
-pinMode(echoPin, INPUT); // Sets the echoPin as an INPUT
+  // Sonar - HC-SR04
+  pinMode(trigPin, OUTPUT); // Sets the trigPin as an OUTPUT
+  pinMode(echoPin, INPUT); // Sets the echoPin as an INPUT
 
-// Crash Sensor / Button
-pinMode(crashSensor, INPUT);
+  // Crash Sensor / Button
+  pinMode(crashSensor, INPUT);
 
-// Line Sensor
-pinMode(lineSensorPin, OUTPUT);
+  // Line Sensor
+  pinMode(lineSensorPin, OUTPUT);
 
-// SD Card initialisation
+  // PIR Sensor
+  pinMode(pirPin, INPUT);
+
+  // SD Card initialisation
   Serial.print("Initializing SD card...");
   if (!SD.begin(10)) {
     Serial.println("initialization failed!");
     while (1);
 
   }
-// Real Time Clock (RTC)
+  // Real Time Clock (RTC)
   rtc.begin(DateTime(F(__DATE__), F(__TIME__)));
   Serial.println("initialization done.");
-logEvent("System Initialisation...");
+  logEvent("System Initialisation...");
 }
 
 
 void loop() {
-         wateringSystem();
-         windowOpen();
-         personDetect();
-          // Serial.println(wateringSystem());
-         //Serial.println(readDistance());
-         Serial.println(potRead());
-       // piezoOut();
-          delay(250);      
+  wateringSystem();
+  windowOpen();
+  personDetect();
+  // Serial.println(wateringSystem());
+  //Serial.print(readDistance());
+Serial.print("PIRstate:  ");
+Serial.println(PIRread());
+Serial.print("POTval:  ");
+Serial.println(potRead());
+Serial.print("SonarReadout:   ");
+Serial.println(readDistance());
+Serial.print("ButtonState:    ");
+Serial.println(buttonRead());
+dcMotor();
+//Serial.print("piezoOut:   ");
+//Serial.println(piezoOut());
+  //Serial.println(potRead());
+  //Serial.println(PIRread());
+  // piezoOut();
+  //Serial.println(buttonRead());
+  //dcMotor();
+
+
+  
+  delay(500);
 }
 
 /*
- * IT will take the values from Button, Line sensor, sonic sensor, and mostiure sensor and turn on the DC motor (watering system) and turn on the traffic light to green
- * @param If button is true, line sensor says door is closed, sonic sensor confirms the door is closed and if the mositure content on the soil is too low
- * @return It will turn on the DC motor wich is sumlating a watering system pump.
- */
+   IT will take the values from Button, Line sensor, sonic sensor, and mostiure sensor and turn on the DC motor (watering system) and turn on the traffic light to green
+   @param If button is true, line sensor says door is closed, sonic sensor confirms the door is closed and if the mositure content on the soil is too low
+   @return It will turn on the DC motor wich is sumlating a watering system pump.
+*/
 bool wateringSystem() {
-int buttonState = digitalRead(crashSensor);
+  int buttonState = digitalRead(crashSensor);
 
-return buttonState;
-  
+  return buttonState;
+
 }
 /*
- *The servo will open the window when the person is in the green house. 
- *@param if the door is open (sonic sensor true) the window will open
- *@return The servio will turn to the set open height                                            
- */
-void windowOpen(){
+  The servo will open the window when the person is in the green house.
+  @param if the door is open (sonic sensor true) the window will open
+  @return The servio will turn to the set open height
+*/
+void windowOpen() {
 
-  
-}
 
-/*
- * This uses the pir sensor to detect movemnt within the green house and use the sonic sensor to detect the door opening  
- * @param if the pir and sonic sensor detect true turn of the watering system 
- * @return turn off watering system.
- */
-void personDetect(){
-
-  
 }
 
 /*
- * This reads the distance from the snoic sensnsor 
- * @param gets the distance 
- * @return returs a true or false depending on close and object is
- */
+   This uses the pir sensor to detect movemnt within the green house and use the sonic sensor to detect the door opening
+   @param if the pir and sonic sensor detect true turn of the watering system
+   @return turn off watering system.
+*/
+void personDetect() {
+
+
+}
+
+/*
+   This reads the distance from the snoic sensnsor
+   @param gets the distance
+   @return returs a true or false depending on close and object is
+*/
 int readDistance() {
-   // Clears the trigPin condition
+  // Clears the trigPin condition
   digitalWrite(trigPin, LOW);
   delayMicroseconds(2);
   // Sets the trigPin HIGH (ACTIVE) for 10 microseconds
@@ -157,41 +179,63 @@ int readDistance() {
   distance = duration * 0.034 / 2; // Speed of sound wave divided by 2 (go and back)
 
 
-  
-  if(distance < 25){
-   return true; // returns as 1
-  }else{
+
+  if (distance < 25) {
+    return true; // returns as 1
+  } else {
     return false; // returns as 0
-  
+
   }
-delay(100);
+  delay(100);
 }
 
 int buttonRead() {
 
-int buttonState = digitalRead(crashSensor);
+  int buttonState = digitalRead(crashSensor);
 
-return buttonState;
-  
+  return buttonState;
+
 }
 
-int piezoOut(){
-if(readDistance() == 1){
-  tone(piezoPin, potRead());
-}else
-{
-  noTone(piezoPin);
+int piezoOut() {
+  if (readDistance() == 1) {
+    tone(piezoPin, potRead());
+    
+  } else
+  {
+    noTone(piezoPin);
+  }
+
 }
-  
-}
-// will get pot vaule then give a percentage 
-int potRead(){
+// will get pot vaule then give a percentage
+int potRead() {
   int potMax = 1016;
-int potValue = analogRead(pot);
+  int potValue = analogRead(pot);
 
-int potPercent = (potValue/1016) * 100;
+  long potPercent = (potValue / 900) * 100;
 
-return potValue;
+  return potValue;
+
+}
+
+bool PIRread(){
+bool pirValue = digitalRead(pirPin);
+return pirValue;
+}
+
+int dcMotor(){
+if(buttonRead() == 0 && readDistance() == 1 ){
+  motor.forward();
+//delay(10000);
+
+//delay(1000);
+//motor.backward();
+//delay(10000);
+
+}else{
+motor.stop();
+  
+}
   
 }
 
