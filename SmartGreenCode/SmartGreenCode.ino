@@ -43,6 +43,10 @@ Servo myservo;
 
 #define pirPin 6
 
+int buttonPushCounter = 0;   // counter for the number of button presses
+int buttonState = 0;         // current state of the button
+int lastButtonState = 0;
+
 long duration;
 int distance;
 
@@ -60,7 +64,7 @@ void setup() {
 
 
   // DC Motor & Motor Module - L298N
-  motor.setSpeed(100);
+  motor.setSpeed(250);
 
   // Servo
   myservo.attach(9);  // attaches the servo on pin 9 to the servo object
@@ -116,6 +120,7 @@ Serial.println(readDistance());
 Serial.print("ButtonState:    ");
 Serial.println(buttonRead());
 dcMotor();
+servoMotor();
 //Serial.print("piezoOut:   ");
 //Serial.println(piezoOut());
   //Serial.println(potRead());
@@ -135,9 +140,7 @@ dcMotor();
    @return It will turn on the DC motor wich is sumlating a watering system pump.
 */
 bool wateringSystem() {
-  int buttonState = digitalRead(crashSensor);
 
-  return buttonState;
 
 }
 /*
@@ -191,9 +194,12 @@ int readDistance() {
 
 int buttonRead() {
 
-  int buttonState = digitalRead(crashSensor);
+  buttonState = digitalRead(crashSensor);
 
-  return buttonState;
+  if (buttonState != lastButtonState) {
+// If the state has changed Incremnent the counter.
+if (buttonState == HIGH);
+
 
 }
 
@@ -224,7 +230,7 @@ return pirValue;
 }
 
 int dcMotor(){
-if(buttonRead() == 0 && readDistance() == 1 ){
+if(buttonRead() == 0 && readDistance() == 1  ){
   motor.forward();
 //delay(10000);
 
@@ -236,6 +242,19 @@ if(buttonRead() == 0 && readDistance() == 1 ){
 motor.stop();
   
 }
+  
+}
+
+int servoMotor() {
+
+myservo.write(180);
+delay(500);
+myservo.write(0);
+delay(500);
+myservo.write(180);
+delay(500);
+myservo.write(0);
+delay(500);
   
 }
 
