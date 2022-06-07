@@ -50,6 +50,7 @@ int lastButtonState = 0;
 long duration;
 int distance;
 
+unsigned long previousMillis = 0; //will store the last time jotor was updated
 
 void setup() {
   Serial.begin(9600);           // Open serial communications and wait for port to open:
@@ -64,7 +65,7 @@ void setup() {
 
 
   // DC Motor & Motor Module - L298N
-  motor.setSpeed(250);
+  motor.setSpeed(255);
 
   // Servo
   myservo.attach(9);  // attaches the servo on pin 9 to the servo object
@@ -86,7 +87,7 @@ void setup() {
   pinMode(crashSensor, INPUT);
 
   // Line Sensor
-  pinMode(lineSensorPin, OUTPUT);
+  pinMode(lineSensorPin, INPUT);
 
   // PIR Sensor
   pinMode(pirPin, INPUT);
@@ -111,18 +112,19 @@ void loop() {
   personDetect();
   // Serial.println(wateringSystem());
   //Serial.print(readDistance());
-Serial.print("PIRstate:  ");
-Serial.println(PIRread());
-Serial.print("POTval:  ");
-Serial.println(potRead());
-Serial.print("SonarReadout:   ");
-Serial.println(readDistance());
-Serial.print("ButtonState:    ");
-Serial.println(buttonRead());
-dcMotor();
-servoMotor();
-//Serial.print("piezoOut:   ");
-//Serial.println(piezoOut());
+  Serial.print("PIRstate:  ");
+  Serial.println(PIRread());
+  Serial.print("POTval:  ");
+  Serial.println(potRead());
+  Serial.print("SonarReadout:   ");
+  Serial.println(readDistance());
+  Serial.print("ButtonState:    ");
+  Serial.println(buttonRead());
+  trafficLight();
+  dcMotor();
+  //servoMotor();
+  //Serial.print("piezoOut:   ");
+  //Serial.println(piezoOut());
   //Serial.println(potRead());
   //Serial.println(PIRread());
   // piezoOut();
@@ -130,7 +132,7 @@ servoMotor();
   //dcMotor();
 
 
-  
+
   delay(500);
 }
 
@@ -167,6 +169,7 @@ void personDetect() {
    This reads the distance from the snoic sensnsor
    @param gets the distance
    @return returs a true or false depending on close and object is
+   1 means door is closed and 0 means door is open
 */
 int readDistance() {
   // Clears the trigPin condition
@@ -195,18 +198,37 @@ int readDistance() {
 int buttonRead() {
 
   buttonState = digitalRead(crashSensor);
+  // compare the buttonState to its previous state
 
   if (buttonState != lastButtonState) {
-// If the state has changed Incremnent the counter.
-if (buttonState == HIGH);
+    // if the state has changed, increment the counter
+    if (buttonState == HIGH) {
+      // if the current state is HIGH then the button went from off to on:
+      buttonPushCounter++;
+      Serial.println("on");
+      Serial.print("number of button pushes: ");
+      Serial.println(buttonPushCounter);
+    } else {
+      // if the current state is LOW then the button went from on to off:
+      Serial.println("off");
+    }
+    delay(50);
+  }
+  lastButtonState = buttonState;
 
+
+  if (buttonPushCounter % 2 == 0) {
+    return 0;
+  } else {
+    return 1;
+  }
 
 }
 
 int piezoOut() {
   if (readDistance() == 1) {
     tone(piezoPin, potRead());
-    
+
   } else
   {
     noTone(piezoPin);
@@ -224,38 +246,71 @@ int potRead() {
 
 }
 
-bool PIRread(){
-bool pirValue = digitalRead(pirPin);
-return pirValue;
+bool PIRread() {
+  bool pirValue = digitalRead(pirPin);
+  return pirValue;
 }
 
-int dcMotor(){
-if(buttonRead() == 0 && readDistance() == 1  ){
+int dcMotor() {
+  int timerValue(5);//enter seconds
+  int TIMER(timerValue * 1000); // 1 second = 1000 miliseconds
+  int i = 0;
+  if (buttonRead() == 0 && readDistance() == 1  ) {
   motor.forward();
-//delay(10000);
+  }
+   
+    const long interval = 1000; //intevial at which to blink  
+int motorState = motor.stop();
 
-//delay(1000);
-//motor.backward();
-//delay(10000);
+  unsigned long currentMillis = millis();
+if (currentMillis - previousMillis >= interval) {
+    // save the last time you blinked the LED
+    previousMillis = currentMillis;
 
-}else{
-motor.stop();
+    // if the LED is off turn it on and vice-versa:
+    if (motorState = motor.stop()) {
+      motorState = motor.forward();
+    } else {
+   /  motorState = motor.stop();
+    }
+
+    // set the motor value with the motorstate of the variable:
+    motor.motorState();
   
-}
-  
-}
+  }
+  }
+
 
 int servoMotor() {
 
-myservo.write(180);
-delay(500);
-myservo.write(0);
-delay(500);
-myservo.write(180);
-delay(500);
-myservo.write(0);
-delay(500);
-  
+  myservo.write(180);
+  delay(500);
+  myservo.write(0);
+  delay(500);
+  myservo.write(180);
+  delay(500);
+  myservo.write(0);
+  delay(500);
+
+}
+
+int trafficLight() {
+
+  if (buttonRead() == 0  && readDistance() == 1) {
+    digitalWrite(ledGreen, HIGH);
+  } else {
+    digitalWrite(ledGreen, LOW);
+  }
+  if (buttonRead() == 1) {
+    digitalWrite(ledRed, HIGH);
+  } else {
+    digitalWrite(ledRed, LOW);
+  }
+  if (buttonRead() == 0 && readDistance() == 0) {
+    digitalWrite(ledYellow, HIGH);
+  } else {
+    digitalWrite(ledYellow, LOW);
+  }
 }
 
 void logEvent(String dataToLog) {
