@@ -252,32 +252,25 @@ bool PIRread() {
 }
 
 int dcMotor() {
-  int timerValue(5);//enter seconds
-  int TIMER(timerValue * 1000); // 1 second = 1000 miliseconds
+  
   int i = 0;
   if (buttonRead() == 0 && readDistance() == 1  ) {
   motor.forward();
+delay(5000);
+i + 1;
+if(i = 1){
+  motor.stop();
+  if(buttonRead() == 0 && readDistance() == 1){
+    motor.stop();
   }
+}
+  }else
+  {
+    motor.stop();
+  }
+    
    
-    const long interval = 1000; //intevial at which to blink  
-int motorState = motor.stop();
-
-  unsigned long currentMillis = millis();
-if (currentMillis - previousMillis >= interval) {
-    // save the last time you blinked the LED
-    previousMillis = currentMillis;
-
-    // if the LED is off turn it on and vice-versa:
-    if (motorState = motor.stop()) {
-      motorState = motor.forward();
-    } else {
-   /  motorState = motor.stop();
-    }
-
-    // set the motor value with the motorstate of the variable:
-    motor.motorState();
-  
-  }
+   
   }
 
 
