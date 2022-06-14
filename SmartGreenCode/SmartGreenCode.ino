@@ -112,16 +112,20 @@ void loop() {
   personDetect();
   // Serial.println(wateringSystem());
   //Serial.print(readDistance());
-  Serial.print("PIRstate:  ");
-  Serial.println(PIRread());
-  Serial.print("POTval:  ");
-  Serial.println(potRead());
-  Serial.print("SonarReadout:   ");
-  Serial.println(readDistance());
-  Serial.print("ButtonState:    ");
-  Serial.println(buttonRead());
-  trafficLight();
-  dcMotor();
+  //Serial.print("PIRstate:  ");
+ // Serial.println(PIRread());
+  //Serial.print("POTval:  ");
+  //Serial.println(potRead());
+  //Serial.print("SonarReadout:   ");
+  //Serial.println(readDistance());
+  //Serial.print("ButtonState:    ");
+  //Serial.println(buttonRead());
+ // Serial.print("LineState:      ");
+ // Serial.println(lineSensor());
+ // Serial.print("MoistureState:  ");
+ // Serial.println(moistureSensor());
+ // trafficLight();
+ // dcMotor();
   //servoMotor();
   //Serial.print("piezoOut:   ");
   //Serial.println(piezoOut());
@@ -130,7 +134,7 @@ void loop() {
   // piezoOut();
   //Serial.println(buttonRead());
   //dcMotor();
-
+wateringSystem();
 
 
   delay(500);
@@ -142,8 +146,14 @@ void loop() {
    @return It will turn on the DC motor wich is sumlating a watering system pump.
 */
 bool wateringSystem() {
-
-
+trafficLight();
+potRead();
+readDistance();
+buttonRead();
+servoMotor();
+piezoOut();
+dcMotor();
+ 
 }
 /*
   The servo will open the window when the person is in the green house.
@@ -226,7 +236,8 @@ int buttonRead() {
 }
 
 int piezoOut() {
-  if (readDistance() == 1) {
+ 
+  if (readDistance() == 1 && buttonRead() == 0 && moistureSensor() == 1) {
     tone(piezoPin, potRead());
 
   } else
@@ -254,7 +265,8 @@ bool PIRread() {
 int dcMotor() {
   
   int i = 0;
-  if (buttonRead() == 0 && readDistance() == 1  ) {
+  if (buttonRead() == 0 && readDistance() == 1 && moistureSensor() == 1
+  ) {
   motor.forward();
 delay(5000);
 i + 1;
@@ -275,21 +287,18 @@ if(i = 1){
 
 
 int servoMotor() {
+if (buttonRead() == 0  && readDistance() == 1 && moistureSensor() == 1) {
+     myservo.write(180);
+  } else {
+   myservo.write(0);
+  }
 
-  myservo.write(180);
-  delay(500);
-  myservo.write(0);
-  delay(500);
-  myservo.write(180);
-  delay(500);
-  myservo.write(0);
-  delay(500);
 
 }
 
 int trafficLight() {
 
-  if (buttonRead() == 0  && readDistance() == 1) {
+  if (buttonRead() == 0  && readDistance() == 1 && moistureSensor() == 1 ) {
     digitalWrite(ledGreen, HIGH);
   } else {
     digitalWrite(ledGreen, LOW);
@@ -304,6 +313,27 @@ int trafficLight() {
   } else {
     digitalWrite(ledYellow, LOW);
   }
+}
+
+int lineSensor() {
+
+int lineValue = digitalRead(lineSensorPin);
+
+return lineValue;
+
+
+  
+}
+
+int moistureSensor(){
+  
+int moistureValue = analogRead(moisturePin);
+if(moistureValue < 200){
+  return false;
+}else{
+  return true;
+}
+  return moistureSensor();
 }
 
 void logEvent(String dataToLog) {
