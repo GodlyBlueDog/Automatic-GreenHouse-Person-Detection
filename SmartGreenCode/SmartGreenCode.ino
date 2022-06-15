@@ -135,7 +135,7 @@ void loop() {
   //Serial.println(buttonRead());
   //dcMotor();
 wateringSystem();
-
+Serial.println(lineSensor());
 
   delay(500);
 }
@@ -151,7 +151,7 @@ potRead();
 readDistance();
 buttonRead();
 servoMotor();
-piezoOut();
+//piezoOut();
 dcMotor();
  
 }
@@ -265,7 +265,7 @@ bool PIRread() {
 int dcMotor() {
   
   int i = 0;
-  if (buttonRead() == 0 && readDistance() == 1 && moistureSensor() == 1
+  if (buttonRead() == 0 && readDistance() == 1 && moistureSensor() == 1 && lineSensor() == false
   ) {
   motor.forward();
 delay(5000);
@@ -287,7 +287,7 @@ if(i = 1){
 
 
 int servoMotor() {
-if (buttonRead() == 0  && readDistance() == 1 && moistureSensor() == 1) {
+if (buttonRead() == 0  && readDistance() == 1 && moistureSensor() == 1 && lineSensor() == false) {
      myservo.write(180);
   } else {
    myservo.write(0);
@@ -298,7 +298,7 @@ if (buttonRead() == 0  && readDistance() == 1 && moistureSensor() == 1) {
 
 int trafficLight() {
 
-  if (buttonRead() == 0  && readDistance() == 1 && moistureSensor() == 1 ) {
+  if (buttonRead() == 0  && readDistance() == 1 && moistureSensor() == 1 && lineSensor() == false ) {
     digitalWrite(ledGreen, HIGH);
   } else {
     digitalWrite(ledGreen, LOW);
@@ -319,7 +319,15 @@ int lineSensor() {
 
 int lineValue = digitalRead(lineSensorPin);
 
-return lineValue;
+if(lineValue == 1){
+ return true;
+  
+}else
+{
+  return false;
+}
+
+
 
 
   
